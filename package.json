@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-laravel-blade-class-parser",
-  "version": "0.0.1-rc.2",
+  "version": "0.0.1-rc.3",
   "private": false,
   "description": "Vite Plugin to pipe Laravel Blade element classnames to file for CI/CD pipelines.",
   "author": "Dcode Group",
