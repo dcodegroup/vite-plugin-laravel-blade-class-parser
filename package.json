@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-laravel-blade-class-parser",
-  "version": "0.0.1-rc.1",
+  "version": "0.0.1-rc.3",
   "private": false,
   "description": "Vite Plugin to pipe Laravel Blade element classnames to file for CI/CD pipelines.",
   "author": "Dcode Group",
@@ -33,12 +33,14 @@
     "eslint-plugin-prettier": "^4.2.1",
     "glob": "^8.0.3",
     "mkdirp": "^1.0.4",
-    "node-html-parser": "^6.1.4",
     "path": "^0.12.7",
     "prettier": "^2.8.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.9.3",
     "vite": "^3.2.4"
+  },
+  "dependencies": {
+    "node-html-parser": "^6.1.4"
   },
   "peerDependencies": {
     "vite": "^3.0.0"

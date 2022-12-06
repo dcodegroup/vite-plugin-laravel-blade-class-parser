@@ -26,7 +26,6 @@ function LaravelBladeClassParser(options) {
     return {
         name: "LaravelBladeClassParser",
         buildStart() {
-            console.log(configuration);
             // # Parse: Blade Files and write file.
             (0, parser_1.parseBlade)(configuration);
         }
