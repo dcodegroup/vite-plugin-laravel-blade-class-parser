@@ -19,7 +19,8 @@ export default function LaravelBladeClassParser(options: LaravelBladeClassParser
     {
       outputFilePath: path.resolve("blade-classes.txt"),
       filterPrefix: "",
-      delimiter: ","
+      delimiter: ",",
+      tailwindMode: false
     },
     options
   );

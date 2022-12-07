@@ -20,7 +20,8 @@ function LaravelBladeClassParser(options) {
     const configuration = Object.assign({}, {
         outputFilePath: path_1.default.resolve("blade-classes.txt"),
         filterPrefix: "",
-        delimiter: ","
+        delimiter: ",",
+        tailwindMode: false
     }, options);
     // # Return: Vite Config
     return {

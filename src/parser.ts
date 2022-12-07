@@ -7,6 +7,7 @@ import glob from "glob";
 import fs from "fs";
 import { parse } from "node-html-parser";
 import type { LaravelBladeClassParserOptions } from "../types";
+import tailwindClasses from "./lib/tailwindclasses";
 
 /**
  *  Function: parseBlade()
@@ -29,23 +30,52 @@ export const parseBlade = (options: LaravelBladeClassParserOptions) => {
 
   // # Use: PHP parser to extract class names from each file
   bladeFiles.forEach((file) => {
-    const fileContents = fs.readFileSync(file, "utf8");
+    let fileContents = fs.readFileSync(file, "utf8");
+
+    if (!options.tailwindMode) {
+      fileContents = fileContents.replace(bladeRegex, "").replace(/^\s+|\s+$|\s+(?=\s)/gm, "");
+    }
 
     try {
-      // # Parse: the blade file as HTML document
-      const root = parse(fileContents.replace(bladeRegex, "").replace(/^\s+|\s+$|\s+(?=\s)/gm, ""));
+      if (!options.tailwindMode) {
+        // # Parse: the blade file as HTML document
+        const root = parse(fileContents);
 
-      // # Get: all elements that match the selector "*"
-      const elements = root.querySelectorAll("*");
+        // # Get: all elements that match the selector "*"
+        const elements = root.querySelectorAll("*");
 
-      // # Loop: through the elements and add their unique class names to the array
-      elements.forEach((element) => {
-        element.classList.value.forEach((className) => {
-          if (!classNames.includes(className)) {
-            classNames.push(className);
+        // # Loop: through the elements and add their unique class names to the array
+        elements.forEach((element) => {
+          element.classList.value.forEach((className) => {
+            if (!classNames.includes(className)) {
+              classNames.push(className);
+            }
+          });
+        });
+      } else {
+        // console.log("🟢🟢🟢");
+        // console.log(tailwindClasses);
+        tailwindClasses.forEach((className, classIndex) => {
+          if (typeof className === "string") {
+            // console.log("👀 Searching class name: " + className);
+            if (fileContents.includes(className)) {
+              // console.log("🔍 [" + file + "] matching class: " + className);
+              tailwindClasses.splice(classIndex, 1);
+
+              if (classNames.indexOf(className) === -1) {
+                classNames.push(className);
+              }
+            }
+          } else if (className instanceof RegExp) {
+            const matches = fileContents.match(className);
+            if (matches !== null) {
+              const uniqueMatches = matches.filter((value, index, self) => self.indexOf(value) === index);
+              // console.log("🔍 [" + file + "] matching class: ", uniqueMatches);
+              classNames = classNames.concat(uniqueMatches);
+            }
           }
         });
-      });
+      }
     } catch (e) {
       console.log("Error with parsing file: ", file);
     }
@@ -54,6 +84,11 @@ export const parseBlade = (options: LaravelBladeClassParserOptions) => {
   // # Filter: class names by prefix if specified
   if (typeof options.filterPrefix === "string" && options.filterPrefix) {
     classNames = classNames.filter((className) => className.startsWith(options.filterPrefix ?? ""));
+  }
+
+  // # Filter: Unique again for tailwind mode
+  if (options.tailwindMode) {
+    classNames = classNames.filter((value, index, self) => self.indexOf(value) === index);
   }
 
   // # Write: class names to output file
